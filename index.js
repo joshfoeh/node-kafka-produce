@@ -3,14 +3,13 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.json());
 
-var kafkaHost = process.env.KAFKA_HOST;
-var kafkaPort = process.env.KAFKA_PORT;
+var kafkaBrokers = process.env.KAFKA_BROKERS;
 var serverPort = process.env.SERVER_PORT;
 
 //todo make sure none of these are null
 
 const kafka = require('kafka-node');
-const kafkaClient = new kafka.KafkaClient({kafkaHost: `${kafkaHost}:${kafkaPort}`});
+const kafkaClient = new kafka.KafkaClient({kafkaHost: kafkaBrokers});
 const kafkaProducer = new kafka.Producer(kafkaClient);
 
 var isProducerReady = false;
