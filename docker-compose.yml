@@ -22,6 +22,7 @@ services:
     ports:
       - "${KAFKA_PRODUCER_SERVER_PORT}:${KAFKA_PRODUCER_SERVER_PORT}"
     environment:
+      DEFAULT_TOPIC: ${DEFAULT_TOPIC}
       KAFKA_BROKERS: ${KAFKA_BROKERS}
       SERVER_PORT: ${KAFKA_PRODUCER_SERVER_PORT}
     depends_on:

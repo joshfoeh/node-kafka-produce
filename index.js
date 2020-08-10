@@ -5,6 +5,7 @@ app.use(bodyParser.json());
 
 var kafkaBrokers = process.env.KAFKA_BROKERS;
 var serverPort = process.env.SERVER_PORT;
+var defaultTopic = process.env.DEFAULT_TOPIC;
 
 //todo make sure none of these are null
 
@@ -13,7 +14,6 @@ const kafkaClient = new kafka.KafkaClient({kafkaHost: kafkaBrokers});
 const kafkaProducer = new kafka.Producer(kafkaClient);
 
 var isProducerReady = false;
-var topic = 'toDevice';
 
 kafkaProducer.on('ready', () => {
 	isProducerReady = true;
@@ -27,6 +27,10 @@ kafkaProducer.on('error', (err) => {
 app.post('/produce', (req, res) => {
 	var statusCode, responseBody;
 	if (isProducerReady) {
+		var topic = req.header("topic");
+		if (topic == null) {
+			topic = defaultTopic;
+		}
 		// console.log(`Sending payload: ${JSON.stringify(req.body, null, 2)}\nto topic: ${topic}`);
 		sendToKafka(topic, req.body);
 		statusCode = 200;
@@ -48,6 +52,7 @@ app.listen(serverPort, () => {
 })
 
 function sendToKafka(topic, message) {
+	console.log(`Sending message to topic ${topic}`);
 	var payloads = [{
 		topic: topic,
 		messages: JSON.stringify(message)
